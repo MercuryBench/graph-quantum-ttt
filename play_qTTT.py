@@ -11,7 +11,7 @@ while(True): # loop for games
 		print("You're playing against the computer")
 	turn = whoGoesFirst()
 	if mode == "pvp":
-		print('Player ' + str(turn) + ' will go first.')
+		print('Player ' + str(turn) + ' will go first.')	# global assumption: X always starts
 		if turn == 1:
 			playerLetter, player2letter = "X", "O" #inputPlayerLetter()
 		else:
@@ -97,23 +97,6 @@ while(True): # loop for games
 				print("It's the computer's turn")
 			# Player 2's turn or computer.
 			theBoard.printBoard()
-			
-			"""val = None
-			move = None
-			print("Thinking...")
-			if lastMark:
-				root = BoardLeaf(theBoard, None, lastMark, player2letter, playerLetter, numMark, None)
-				[val, moves] = minimax(root, rec, rec, True)
-				move = random.choice(moves)
-			else:
-				root = BoardLeaf(theBoard, None, None, player2letter, playerLetter, numMark, None)
-				[val, moves] = minimax(root, rec, rec, True)
-				move = random.choice(moves)
-			print("Finished thinking")
-			if val == 1:
-				print("I found a winning strategy")
-			if val == -1:
-				print("I think I will lose")"""
 
 			if mode == "pvp":
 				if lastMark:
@@ -160,6 +143,7 @@ while(True): # loop for games
 			   
 				lastMark = theBoard.addSpookyMark_(player2letter, numMark, pos1, pos2)
 				numMark += 1
+			else: # player vs. computer, and it's the computer's turn
 
 	if not playAgain():
 		break

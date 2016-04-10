@@ -20,6 +20,9 @@ class Movecode: # a compact representation of all possible moves in one turn
 		else:
 			s2 = "--"
 		return s1 + ", " + s2
+	def __eq__(self, other):
+		assert(isinstance(other, Movecode))
+		return self.collapsePars.equals(other.collapsePars) and self.spookyMarkPars.equals(other.spookyMarkPars)
 		
 class CollapsePars: # a compact representation of all parameters of a collapse
 	def __init__(self, collPars):
@@ -31,6 +34,9 @@ class CollapsePars: # a compact representation of all parameters of a collapse
 		return CollapsePars([self.letter, self.num, self.collapseNotAt, self.collapseAt])
 	def toString(self):
 		return self.letter + str(self.num) + str(self.collapseAt) + str(self.collapseNotAt)
+	def __eq__(self, other):
+		assert(isinstance(other, CollapsePars))
+		return (self.letter = other.letter and self.num = other.num and self.collapseAt = other.collapseAt and self.collapseNotAt = other.collapseNotAt)
 		
 class SpookyMarkPars: # a compact representation of all parameters of setting a spooky mark
 	def __init__(self, spookyPars):
@@ -42,6 +48,12 @@ class SpookyMarkPars: # a compact representation of all parameters of setting a 
 		return SpookyMarkPars([self.letter, self.num, self.otherpos, self.pos])
 	def toString(self):
 		return self.letter + str(self.num) + str(self.pos) + str(self.otherpos)
+	def __eq__(self, other):
+		assert(isinstance(other, SpookyMarkPars))
+		t = self.twin()
+		ident = (self.letter == other.letter and self.num = other.num and self.pos = other.pos and self.otherpos = other.pos)
+		ident2 = (t.letter == other.letter and t.num = other.num and t.pos = other.pos and t.otherpos = other.pos)
+		return ident or ident2 # permutation is allowed
 		
 class ClassicalMarkPars:# a compact representation of all parameters of setting a classical mark
 	def __init__(self, classyPars):
@@ -257,6 +269,9 @@ class Board:
 					return False
 		return True
 
+	def isTerminal(self):	# careful: 'X' and 'O' are hard-coded here!
+		return self.isFull() or self.hasWon('X') or self.hasWon('O')
+
 	def makeMove(self, movecode):	# compact way of making all possible varieties of moves:
 		# 1) only a normal move
 		# 2) a collapse and a normal move
@@ -338,8 +353,7 @@ class Board:
 #				listOfMoves.append(move)
 #		return listOfMoves
 		
-	# the following function is the most difficult one: It is used recursively to find a cycle in the maze of spooky marks in order to 
-	# find out whether a collaps will take place
+	
 	def makeSteps(self, currentFieldNum, initialFieldNum):
 		conts = self.fields[currentFieldNum].contents # all possible marks from the current position
 		listOfNext = [c.copy() for c in conts]
@@ -360,7 +374,10 @@ class Board:
 				  return res
 				else: # if "one step deeper" runs into a dead end, we take the other option in the list above
 				  continue
-		
+
+	# the following function is the most difficult one: It is used recursively to find a cycle in the maze of spooky marks in order to 
+	# find out whether a collaps will take place
+	
 	def findCycle(self, markStartingFrom):		
 		copyBoard = self.copy()
 		m = copyBoard.makeSteps(markStartingFrom, markStartingFrom)
