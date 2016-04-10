@@ -26,8 +26,8 @@ while(True): # loop for games
 	
 	# INITIALIZE TREE AND BOARD HERE
 	#####################################################
-	# define: theBoard (as the root of the tree)
-	theBoard = Board()
+	# define: board (as the root of the tree)
+	board = Board()
 	lastMark = None
 	numMark = 0
 
@@ -35,27 +35,31 @@ while(True): # loop for games
 		if turn == 1:
 			print("It's player 1's turn. Place your mark (" + playerLetter + ")")
 			theBoard.printBoard()
+			turnboard = board.copy()
+			cp = None # collapsepars yet to be defined
+			sp = None # spooky mark pars yet to be defined
 
 			# Check whether there is entanglement after player 2's move
 			if lastMark:
-				if theBoard.findCycle(lastMark.pos):
-					col = getPlayerCollapse(theBoard, lastMark) # let player 1 decide where to put the last mark
-					theBoard.collapse_(lastMark.letter, lastMark.num, col[0], col[1])
-					theBoard.printBoard()
+				if turnboard.findCycle(lastMark.pos):
+					col = getPlayerCollapse(turnboard, lastMark) # let player 1 decide where to put the last mark
+					cp = CollapsePars([lastMark.letter, lastMark.num, col[0], col[1]])
+					turnboard.collapse(cp)
+					turnboard.printBoard()
 	  
 			# look at winning conditions:
-			p1won, p1lms = theBoard.hasWon(playerLetter)
-			p2won, p2lms = theBoard.hasWon(player2letter)
+			p1won, p1lms = turnboard.hasWon(playerLetter)
+			p2won, p2lms = turnboard.hasWon(player2letter)
 			if p1won:
 				if p2won:
 					if p1lms < p2lms:
 						print("\n")
-						theBoard.printBoard()
+						turnboard.printBoard()
 						print("Player 1 (" + playerLetter + ") has won the game!")
 						break
 					else:
 						print("\n")
-						theBoard.printBoard()
+						turnboard.printBoard()
 						if mode == "pvp":
 							print("Player 2 (" + player2letter + ") has won the game")
 						else:
@@ -64,31 +68,35 @@ while(True): # loop for games
 						break	   			
 				else:
 					print("\n")
-					theBoard.printBoard()
+					turnboard.printBoard()
 					print("Player 1 (" + playerLetter + ") has won the game!")
 					break
 			elif p2won:
 				print("\n")
-				theBoard.printBoard()
+				turnboard.printBoard()
 				if mode == "pvp":
 					print("Player 2 (" + player2letter + ") has won the game")
 				else:
 					print("The computer (" + player2letter + ") has won the game!")
 				break
 			else:
-				if theBoard.isFull():
+				if turnboard.isFull():
 				  print("\n")
-				  theBoard.printBoard()
+				  turnboard.printBoard()
 				  print("The game is a tie!")
 				  break
 		
 			turn = 2
 		   	# if the game hasn't ended, make a move
-			pos1, pos2 = getPlayerMove(theBoard)
+			pos1, pos2 = getPlayerMove(turnboard)
+			sp = SpookyMarkPars([playerLetter, numMark, pos1, pos2])
 		   
-			lastMark = theBoard.addSpookyMark_(playerLetter, numMark, pos1, pos2)
+			lastMark = turnboard.addSpookyMark(sp)
 			#print("How many recursions?")
 			#rec = int(raw_input())
+
+			mc = Movecode(cp, sp)		# this is the summary of all the player's decisions leading to turnboard, the local copy needed for visualization
+			############## make the change in board by going over the game tree using mc
 			numMark += 1
 		else:      
 			if mode == "pvp":
@@ -96,52 +104,60 @@ while(True): # loop for games
 			else:
 				print("It's the computer's turn")
 			# Player 2's turn or computer.
-			theBoard.printBoard()
+
+			board.printBoard()
 
 			if mode == "pvp":
+				turnboard = board.copy()
+				cp = None # collapsepars yet to be defined
+				sp = None # spooky mark pars yet to be defined
 				if lastMark:
-					if theBoard.findCycle(lastMark.pos):
-						col = getPlayerCollapse(theBoard, lastMark) # let player 1 decide where to put the last mark
-						theBoard.collapse_(lastMark.letter, lastMark.num, col[0], col[1])
-						theBoard.printBoard()
+					if turnboard.findCycle(lastMark.pos):
+						col = getPlayerCollapse(turnboard, lastMark) # let player 1 decide where to put the last mark
+						cp = CollapsePars([lastMark.letter, lastMark.num, col[0], col[1]])
+						turnboard.collapse(cp)
+						turnboard.printBoard()
 		  
 				# look at winning conditions:
-				p1won, p1lms = theBoard.hasWon(playerLetter)
-				p2won, p2lms = theBoard.hasWon(player2letter)
+				p1won, p1lms = turnboard.hasWon(playerLetter)
+				p2won, p2lms = turnboard.hasWon(player2letter)
 				if p1won:
 					if p2won:
 						if p1lms < p2lms:
 							print("\n")
-							theBoard.printBoard()
+							turnboard.printBoard()
 							print("Player 1 has won the game!")
 							break
 						else:
 							print("\n")
-							theBoard.printBoard()
+							turnboard.printBoard()
 							print("The computer has won the game!")
 							break	   			
 					else:
 						print("\n")
-						theBoard.printBoard()
+						turnboard.printBoard()
 						print("Player 1 has won the game!")
 						break
 				elif p2won:
 					print("\n")
-					theBoard.printBoard()
+					turnboard.printBoard()
 					print("The computer has won the game!")
 					break
 				else:
-					if theBoard.isFull():
+					if turnboard.isFull():
 					  print("\n")
-					  theBoard.printBoard()
+					  turnboard.printBoard()
 					  print("The game is a tie!")
 					  break
 		
 				turn = 1
 			   	# if the game hasn't ended, make a move
-				pos1, pos2 = getPlayerMove(theBoard)
+				pos1, pos2 = getPlayerMove(turnboard)
+				sp = SpookyMarkPars([playerLetter, numMark, pos1, pos2])
+		   
+				lastMark = turnboard.addSpookyMark(sp)
 			   
-				lastMark = theBoard.addSpookyMark_(player2letter, numMark, pos1, pos2)
+				###### MAKE THE CHANGE!!
 				numMark += 1
 			else: # player vs. computer, and it's the computer's turn
 
