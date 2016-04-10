@@ -1,5 +1,6 @@
 from qTTT import *
 from qTTT_game_util import *
+from qTTT_graph import *
 import random
 
 while(True): # loop for games
@@ -27,14 +28,16 @@ while(True): # loop for games
 	# INITIALIZE TREE AND BOARD HERE
 	#####################################################
 	# define: board (as the root of the tree)
-	board = Board()
+	node = GameNode(Board(), None, None, 'X')
 	lastMark = None
 	numMark = 0
+	
 
 	while (True): # loop for turns
 		if turn == 1:
 			print("It's player 1's turn. Place your mark (" + playerLetter + ")")
-			theBoard.printBoard()
+			board = node.board
+			board.printBoard()
 			turnboard = board.copy()
 			cp = None # collapsepars yet to be defined
 			sp = None # spooky mark pars yet to be defined
@@ -97,8 +100,18 @@ while(True): # loop for games
 
 			mc = Movecode(cp, sp)		# this is the summary of all the player's decisions leading to turnboard, the local copy needed for visualization
 			############## make the change in board by going over the game tree using mc
+			newNode = GameNode(turnboard, node, mc, player2letter)
+			for num, c in enumerate(node.children):
+				if mc == c[0]:
+					node.children[num][1] = newNode
+					print(num)
+			"""for num, mc_, _ in enumerate(node.children):
+				if mc_.equals(mc):
+					node.children[num] = newNode"""
+			node = newNode	# reset pointer to current node 
 			numMark += 1
-		else:      
+		else:      	
+			board = node.board
 			if mode == "pvp":
 				print("It's player 2's turn. Place your mark (" + player2letter + ")")
 			else:
@@ -153,14 +166,24 @@ while(True): # loop for games
 				turn = 1
 			   	# if the game hasn't ended, make a move
 				pos1, pos2 = getPlayerMove(turnboard)
-				sp = SpookyMarkPars([playerLetter, numMark, pos1, pos2])
+				sp = SpookyMarkPars([player2letter, numMark, pos1, pos2])
 		   
 				lastMark = turnboard.addSpookyMark(sp)
-			   
+			   	mc = Movecode(cp, sp)		# this is the summary of all the player's decisions leading to turnboard, the local copy needed for visualization
+				############## make the change in board by going over the game tree using mc
+				newNode = GameNode(turnboard, node, mc, playerLetter)
+				for num, c in enumerate(node.children):
+					if mc == c[0]:
+						node.children[num][1] = newNode
+						print(num)
+				"""for num, mc_, _ in enumerate(node.children):
+					if mc_.equals(mc):
+						node.children[num] = newNode"""
+				node = newNode 	# reset pointer to current node 
 				###### MAKE THE CHANGE!!
 				numMark += 1
 			else: # player vs. computer, and it's the computer's turn
-
+				print("blah")
 	if not playAgain():
 		break
 

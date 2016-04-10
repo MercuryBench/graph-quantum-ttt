@@ -22,7 +22,7 @@ class Movecode: # a compact representation of all possible moves in one turn
 		return s1 + ", " + s2
 	def __eq__(self, other):
 		assert(isinstance(other, Movecode))
-		return self.collapsePars.equals(other.collapsePars) and self.spookyMarkPars.equals(other.spookyMarkPars)
+		return self.collapsePars == other.collapsePars and self.spookyMarkPars == other.spookyMarkPars
 		
 class CollapsePars: # a compact representation of all parameters of a collapse
 	def __init__(self, collPars):
@@ -36,7 +36,7 @@ class CollapsePars: # a compact representation of all parameters of a collapse
 		return self.letter + str(self.num) + str(self.collapseAt) + str(self.collapseNotAt)
 	def __eq__(self, other):
 		assert(isinstance(other, CollapsePars))
-		return (self.letter = other.letter and self.num = other.num and self.collapseAt = other.collapseAt and self.collapseNotAt = other.collapseNotAt)
+		return (self.letter == other.letter and self.num == other.num and self.collapseAt == other.collapseAt and self.collapseNotAt == other.collapseNotAt)
 		
 class SpookyMarkPars: # a compact representation of all parameters of setting a spooky mark
 	def __init__(self, spookyPars):
@@ -51,8 +51,8 @@ class SpookyMarkPars: # a compact representation of all parameters of setting a 
 	def __eq__(self, other):
 		assert(isinstance(other, SpookyMarkPars))
 		t = self.twin()
-		ident = (self.letter == other.letter and self.num = other.num and self.pos = other.pos and self.otherpos = other.pos)
-		ident2 = (t.letter == other.letter and t.num = other.num and t.pos = other.pos and t.otherpos = other.pos)
+		ident = (self.letter == other.letter and self.num == other.num and self.pos == other.pos and self.otherpos == other.otherpos)
+		ident2 = (t.letter == other.letter and t.num == other.num and t.pos == other.pos and t.otherpos == other.otherpos)
 		return ident or ident2 # permutation is allowed
 		
 class ClassicalMarkPars:# a compact representation of all parameters of setting a classical mark
