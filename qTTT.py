@@ -203,22 +203,22 @@ class Board:
 			lowermaxsubscript = -1 # failsafe option
 		return winningEvent, lowermaxsubscript
 
-	def actualWinner(self, letter, otherLetter):
+	def actualWinner(self, letter, otherLetter): # +1 means, letter won, -1 means, otherLetter won, 0 is a tie
 		we, lms = self.hasWon(letter)
 		we2, lms2 = self.hasWon(otherLetter)
 
 		if we:
 			if we2:
 				if lms < lms2:
-					return 0
-				else:
 					return 1
+				else:
+					return -1
 			else:
-				return 0
+				return 1
 		elif we2:
-			return 1
+			return -1
 		else:
-			return None
+			return 0
 
 
 	def realBoard(self): # returns only the "real" board, i.e. classical marks in any fields
@@ -270,7 +270,7 @@ class Board:
 		return True
 
 	def isTerminal(self):	# careful: 'X' and 'O' are hard-coded here!
-		return self.isFull() or self.hasWon('X') or self.hasWon('O')
+		return self.isFull() or self.hasWon('X')[0] or self.hasWon('O')[0]
 
 	def makeMove(self, movecode):	# compact way of making all possible varieties of moves:
 		# 1) only a normal move

@@ -28,7 +28,7 @@ while(True): # loop for games
 	# INITIALIZE TREE AND BOARD HERE
 	#####################################################
 	# define: board (as the root of the tree)
-	node = GameNode(Board(), None, None, 'X')
+	node = GameNode(Board(), None, None, 'X', 'O')
 	lastMark = None
 	numMark = 0
 	
@@ -100,7 +100,7 @@ while(True): # loop for games
 
 			mc = Movecode(cp, sp)		# this is the summary of all the player's decisions leading to turnboard, the local copy needed for visualization
 			############## make the change in board by going over the game tree using mc
-			newNode = GameNode(turnboard, node, mc, player2letter)
+			newNode = GameNode(turnboard, node, mc, player2letter, playerLetter)
 			for num, c in enumerate(node.children):
 				if mc == c[0]:
 					node.children[num][1] = newNode
@@ -171,7 +171,7 @@ while(True): # loop for games
 				lastMark = turnboard.addSpookyMark(sp)
 			   	mc = Movecode(cp, sp)		# this is the summary of all the player's decisions leading to turnboard, the local copy needed for visualization
 				############## make the change in board by going over the game tree using mc
-				newNode = GameNode(turnboard, node, mc, playerLetter)
+				newNode = GameNode(turnboard, node, mc, playerLetter, player2letter)
 				for num, c in enumerate(node.children):
 					if mc == c[0]:
 						node.children[num][1] = newNode
