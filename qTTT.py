@@ -35,6 +35,8 @@ class CollapsePars: # a compact representation of all parameters of a collapse
 	def toString(self):
 		return self.letter + str(self.num) + str(self.collapseAt) + str(self.collapseNotAt)
 	def __eq__(self, other):
+		if other == None:
+			return False
 		assert(isinstance(other, CollapsePars))
 		return (self.letter == other.letter and self.num == other.num and self.collapseAt == other.collapseAt and self.collapseNotAt == other.collapseNotAt)
 		
@@ -49,6 +51,8 @@ class SpookyMarkPars: # a compact representation of all parameters of setting a 
 	def toString(self):
 		return self.letter + str(self.num) + str(self.pos) + str(self.otherpos)
 	def __eq__(self, other):
+		if other == None:
+			return False
 		assert(isinstance(other, SpookyMarkPars))
 		t = self.twin()
 		ident = (self.letter == other.letter and self.num == other.num and self.pos == other.pos and self.otherpos == other.otherpos)
@@ -352,8 +356,7 @@ class Board:
 #			if self.isSpaceFree(move):
 #				listOfMoves.append(move)
 #		return listOfMoves
-		
-	
+
 	def makeSteps(self, currentFieldNum, initialFieldNum):
 		conts = self.fields[currentFieldNum].contents # all possible marks from the current position
 		listOfNext = [c.copy() for c in conts]

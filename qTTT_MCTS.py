@@ -7,12 +7,16 @@ from qTTT_graph import *
 
 # These functions are all explained in the survey paper
 
+blockWinningmove = True	# Checks every time whether a move could be a winning move, needs a lot of time
+
 def uctsearch(rootnode, maxTime, param):	# seeks to optimize game for computer (it needs to be computer's turn at rootnode)
 	start_time = time.time()
-	while time.time() - start_time <= maxTime:
+	while time.time() - start_time <= maxTime or not rootnode.isExpanded(): # rootnode needs to have tried out all possibilites, else assert in bestchild will fail
 		newNode =	treepolicy(rootnode, param)
 		delta = defaultpolicy(newNode, rootnode.letter, rootnode.notletter)
 		backup(newNode, delta)
+	print("Number of sims: ")
+	print(rootnode.N) 
 	return bestchild(rootnode, param)[0]
 
 def treepolicy(node, param):
@@ -44,10 +48,15 @@ def bestchild(node, param):
 
 def defaultpolicy(node, computerletter, playerletter): # seeks to maximize computerletter's winning chance
 	while not node.board.isTerminal():
-		mc = random.choice(node.children)
+		winningMove = node.findWinningMove()
 		newBoard = node.board.copy()
-		newBoard.makeMove(mc[0])
-		newNode = GameNode(newBoard, node, mc[0], node.notletter, node.letter)
+		if blockWinningmove and winningMove:	# if exists
+				newBoard.makeMove(winningMove)
+				newNode = GameNode(newBoard, node, winningMove, node.notletter, node.letter)
+		else:
+			mc = random.choice(node.children)
+			newBoard.makeMove(mc[0])
+			newNode = GameNode(newBoard, node, mc[0], node.notletter, node.letter)
 		node = newNode
 	return node.board.actualWinner(computerletter, playerletter) 	# +1 means 'X' won, -1 means 'O' won, 0 is a tie
 

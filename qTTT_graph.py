@@ -50,6 +50,25 @@ class GameNode:	# class for an abstract node: has a board as its status etc.
 			if c[0] == mc:
 				c[1] = newNode
 		return newNode
+	
+	def findWinningMove(self):	# see if there's a move such that player always wins (possibly after collapse)
+		for c in self.children:
+			copyboard = self.board.copy()
+			copyboard.makeMove(c[0])
+			copynode = GameNode(copyboard, self, c[0], self.notletter, self.letter)
+			isWinningMove = True
+			if copyboard.actualWinner(self.letter, self.notletter):
+				return c[0]
+			for cc in copynode.children:
+				copyboard2 = copyboard.copy()
+				copyboard2.makeMove(cc[0])
+				res = copyboard2.actualWinner(self.letter, self.notletter)
+				if res == 0 or res == -1:	# if there is just one alternative not leading to winning, return None
+					isWinningMove = False
+					break
+			if isWinningMove:
+				return c[0]
+		return None
 
 
 		

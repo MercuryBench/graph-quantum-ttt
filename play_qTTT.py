@@ -1,11 +1,13 @@
 from qTTT import *
 from qTTT_game_util import *
 from qTTT_graph import *
+from qTTT_MCTS import *
 import random
+import math
 
 while(True): # loop for games
-	#mode = getGameMode()
-	mode = "pvp"
+	mode = getGameMode()
+	#mode = "pvp"
 	if mode == "pvp":
 		print("You're playing against a human opponent")
 	else:
@@ -183,7 +185,14 @@ while(True): # loop for games
 				###### MAKE THE CHANGE!!
 				numMark += 1
 			else: # player vs. computer, and it's the computer's turn
-				print("blah")
+				mc = uctsearch(node, 20, 1/math.sqrt(2))
+				board = node.board
+				newBoard = board.copy()
+				lastMark = newBoard.makeMove(mc)
+				newNode = GameNode(newBoard, node, mc, playerLetter, player2letter)
+				node = newNode
+				numMark += 1
+				turn = 1
 	if not playAgain():
 		break
 
