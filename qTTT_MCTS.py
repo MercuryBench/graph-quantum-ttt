@@ -43,7 +43,7 @@ def bestchild(node, param):
 	numchildren = len(node.children)
 	vals = np.zeros(numchildren)
 	for n, c in enumerate(node.children):
-		vals[n] = c[1].Q/c[1].N + param*math.sqrt(2*math.log(node.N)/c[1].N)
+		vals[n] = 1.0*c[1].Q/c[1].N + param*math.sqrt(2*math.log(node.N)/c[1].N)
 	return node.children[np.argmax(vals)]	# return best child
 
 def defaultpolicy(node, computerletter, playerletter): # seeks to maximize computerletter's winning chance

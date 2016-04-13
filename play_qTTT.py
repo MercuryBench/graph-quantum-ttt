@@ -185,7 +185,7 @@ while(True): # loop for games
 				###### MAKE THE CHANGE!!
 				numMark += 1
 			else: # player vs. computer, and it's the computer's turn
-				mc = uctsearch(node, 20, 1/math.sqrt(2))
+				mc = uctsearch(node, 10, 1/math.sqrt(2))
 				board = node.board
 				newBoard = board.copy()
 				lastMark = newBoard.makeMove(mc)

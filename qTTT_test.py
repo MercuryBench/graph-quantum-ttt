@@ -3,6 +3,7 @@ from qTTT_MCTS import *
 import math
 
 param = 1/math.sqrt(2)
+param = 1
 computerletter = 'X'
 playerletter = 'O'
 
@@ -31,23 +32,48 @@ tmpnode = GameNode(tmpboard, node, mc, node.notletter, node.letter)
 node = tmpnode
 node.board.printBoard()
 """
-smp1 = SpookyMarkPars(['X', 0, 1, 5])
-smp2 = SpookyMarkPars(['O', 1, 7, 8])
-smp3 = SpookyMarkPars(['X', 2, 9, 5])
 
-mc1 = Movecode(None, smp1)
-mc2 = Movecode(None, smp2)
-mc3 = Movecode(None, smp3)
+
+# Zwickmuehlensetup:
+smp0 = SpookyMarkPars(['X', 0, 7, 5])
+cmp1 = ClassicalMarkPars(['O', 1, 4])
+cmp2 = ClassicalMarkPars(['X', 2, 8])
+cmp3 = ClassicalMarkPars(['O', 3, 2])
+cmp4 = ClassicalMarkPars(['X', 4, 1])
+cmp5 = ClassicalMarkPars(['O', 5, 6])
+
+smp6 = SpookyMarkPars(['X', 6, 3, 5])
+
+mc0 = Movecode(None, smp0)
+mc6 = Movecode(None, smp6)
 
 board = rootnode.board.copy()
-board.makeMove(mc1)
-board.makeMove(mc2)
-board.makeMove(mc3)
+board.makeMove(mc0)
+board.addClassicalMark(cmp1)
+board.addClassicalMark(cmp2)
+board.addClassicalMark(cmp3)
+board.addClassicalMark(cmp4)
+board.addClassicalMark(cmp5)
+board.makeMove(mc6)
 
-rootnode = GameNode(board, None, mc3, 'O', 'X')
+rootnode = GameNode(board, None, mc6, 'O', 'X')
 rootnode.board.printBoard()
 node = rootnode
-mc = uctsearch(node, 10, 1/math.sqrt(2))
+
+for nn in range(1000):
+		newNode = treepolicy(rootnode, param)
+		delta = defaultpolicy(newNode, rootnode.letter, rootnode.notletter)
+		backup(newNode, delta)
+
+for n, c in enumerate(node.children):
+	print(n)
+	c[1].board.printBoard()
+	print(c[0].toString())
+	print(c[1].N)
+	print(c[1].Q)
+	print("----")
+
+#mc = uctsearch(node, 10, 1/math.sqrt(2))
 """
 """
 #newNode = treepolicy(node, param)
